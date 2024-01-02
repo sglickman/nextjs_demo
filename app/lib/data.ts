@@ -187,6 +187,16 @@ export async function fetchCustomers() {
   }
 }
 
+export async function getUserCount() {
+  try {
+    const data = await sql<{ count: number }>`
+      SELECT COUNT(*) FROM users
+    `;
+    const customerCount = data.rows;
+    return customerCount;
+  } catch (err) {}
+}
+
 export async function fetchFilteredCustomers(query: string) {
   try {
     const data = await sql<CustomersTableType>`
