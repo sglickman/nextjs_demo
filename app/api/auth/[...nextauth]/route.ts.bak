@@ -1,0 +1,37 @@
+
+import NextAuth from "next-auth";
+import Email from "next-auth/providers/email";
+import Google from 'next-auth/providers/google';
+import { authConfig } from "../../../../auth.config";
+import pg from 'pg';
+import PostgresAdapter from '@auth/pg-adapter';
+
+const { Pool } = pg;
+const pool = new Pool({
+  connectionString: process.env.POSTGRES_URL + "?sslmode=require",
+});
+
+const handler = NextAuth({
+  ...authConfig,
+  secret: process.env.NEXTAUTH_SECRET,
+  adapter: PostgresAdapter(pool) as any,
+  providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+    Email({
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: Number(process.env.EMAIL_SERVER_PORT),
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD
+        }
+      },
+      from: process.env.EMAIL_FROM
+    }),
+  ],
+});
+
+export { handler as GET, handler as POST }

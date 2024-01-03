@@ -1,0 +1,17 @@
+import NextAuth from "next-auth";
+import Google from "next-auth/providers/google";
+import type { SessionStrategy } from "next-auth";
+
+export const authOptions = {
+  providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+  ],
+  session: {
+    strategy: 'jwt' as SessionStrategy,
+  },
+}
+
+export default NextAuth(authOptions);
